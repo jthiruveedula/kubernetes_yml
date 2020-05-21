@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: myweb-deploy
+spec: 
+  replicas: 3
+  selector: 
+    matchLabels:
+       env: production
+#    matchExpressions:
+#       - { key: env, operator: In, values: [ production] }
+#       - { key: region, operator: In, values: [ IN ] }
+  template: 
+    metadata: 
+      name: deploy-pod
+      labels: 
+        dc: "5"
+        env: production
+        region: IN
+    spec: 
+      containers: 
+        - name: myweb-con
+          image: tjaga77/web-ser:v1
+          ports:
+          - containerPort: 80
+    
+#deployment is being used to overcome downtime challanges.
+#by default it will use replicaSet by balancing load as some extra feature.
+#Deployment uses RollingUpdates
+#using below commands whenever we get new code for update we can do.
+#kubectl create -f deploy.yml
+#kubectl describe deployments myweb-deploy
+#kubectl set image deploy myweb-deploy myweb-con=httpd:v2
+#to monitor whats going behind the scene.
+#kubectl get pods -w
+#kubectl rollout history deploy myweb-deploy
+#for maintaining history of deployments for future rollouts.
+#kubectl set image deploy myweb-deploy myweb-con=httpd:v1 --record=true
+#rollback changes
+#kubectl rollout undo deploy myweb-deploy
